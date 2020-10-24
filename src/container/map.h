@@ -32,7 +32,7 @@ namespace lib_calvin_container
 	};
 
 	template <typename K, typename V, typename Comp>
-	using Map = MapWrapper<K, V, Comp, RbTree<std::pair<K, V>, K, Comp, TakeFirstOfPair<K, V>>>;
+	using RbtreeMap = MapWrapper<K, V, Comp, RbTree<std::pair<K, V>, K, Comp, TakeFirstOfPair<K, V>>>;
 
 	template <typename K, typename V, typename Comp>
 	using BTreeMap = MapWrapper<K, V, Comp, BTree<std::pair<K, V>, K, Comp, TakeFirstOfPair<K, V>>>;
@@ -41,7 +41,7 @@ namespace lib_calvin_container
 namespace lib_calvin
 {
 	template <typename K, typename V, typename Comp = std::less<K>>
-	class map : public lib_calvin_container::Map<K, V, Comp> { };
+	class rbtree_map : public lib_calvin_container::RbtreeMap<K, V, Comp> { };
 
 	template <typename K, typename V, typename Comp = std::less<K>>
 	class btree_map : public lib_calvin_container::BTreeMap<K, V, Comp> { };

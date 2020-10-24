@@ -21,10 +21,11 @@
 namespace lib_calvin_container
 {
 using lib_calvin::vector;
-using lib_calvin::map;
 using lib_calvin::hash_map;
 using std::list;
 using std::pair;
+template <typename K, typename V>
+using map = lib_calvin::rbtree_map<K, V>;
 
 // HEAP_D-ary heap for IntPq
 size_t const HEAP_D = 80;
@@ -49,7 +50,7 @@ public:
 private:
 	size_t newIndex_;
 	map<size_t, K> indexToKey_;
-	lib_calvin::map<K, size_t> keyToIndex_; 
+	map<K, size_t> keyToIndex_;
 };
 
 // P: priority should have < operator
@@ -76,7 +77,7 @@ private:
 	size_t size_; // current num of elements (size of heap)
 	size_t const maxsize_;
 	size_t d_; // d-aray heap: important for performance
-	// pair of (key, priority)	
+	// pair of (key, priority)
 	vector<pair<size_t, P>> heap_;
 	// NULL_INDEX if not inserted yet, index if in heap
 	vector<size_t> indexArray_; // key(int) -> index(int)
@@ -112,7 +113,7 @@ private:
 };
 
 // Careful: this is not normal Stack; only for DFS implementation!
-// Supports decreace-priority function (when push existing number, move it  
+// Supports decreace-priority function (when push existing number, move it
 // ..to the top of the Stack)
 // Dealing only with integers
 class IntStack {
@@ -128,7 +129,7 @@ public:
 private:
 	size_t size_;
 	size_t maxsize_;
-	list<size_t> stack_; 
+	list<size_t> stack_;
 	// pointer to elements in Stack
 	vector<list<size_t>::iterator> intToListIterator_;
 	// stores elements' status

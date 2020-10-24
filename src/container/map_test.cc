@@ -19,31 +19,35 @@ using std::cout;
 using std::endl;
 using lib_calvin::vector;
 
+template <typename K, typename V>
+using map = lib_calvin::rbtree_map<K, V>;
+
 void lib_calvin_container::mapTest()
-{	
+{
 	using namespace lib_calvin_container;
 
+
 	int const testSize = 10000;
-	mapFunctionTest<lib_calvin::map<int, int>>(testSize, "lib_calvin::map");
-	mapRvalueTest<lib_calvin::map<int, HeavyObjectWithMessage>>("mapRvalueTest / lib_calvin::map");
-	
+	mapFunctionTest<map<int, int>>(testSize, "map");
+	mapRvalueTest<map<int, HeavyObjectWithMessage>>("mapRvalueTest / map");
+
 	int const smallSize = 10000;
 	int const largeSize = 100000;
 	//mapPerformanceTest<boost::unordered_map<int, int>>(performTestSize, "boost::unordered_map");
 	//mapPerformanceTest<std::unordered_map<int, int>>(performTestSize, "std::unordered_map");
-	
-	//mapPerformanceTest<lib_calvin::map<int, int>>(largeSize, "lib_calvin::map");
+
+	//mapPerformanceTest<map<int, int>>(largeSize, "map");
 	//mapPerformanceTest<std::map<int, int>>(largeSize, "std::map");
-	//mapPerformanceTest<lib_calvin_container::map<HeavyObject, int>>(smallSize, "lib_calvin::map / HeavyObject->int");
-	mapPerformanceTest<lib_calvin::map<int, HeavyObject>>(largeSize, "lib_calvin::map / int->HeavyObject");
+	//mapPerformanceTest<lib_calvin_container::map<HeavyObject, int>>(smallSize, "map / HeavyObject->int");
+	mapPerformanceTest<map<int, HeavyObject>>(largeSize, "map / int->HeavyObject");
 	//mapPerformanceTest<std::map<HeavyObject, int>>(largeSize, "std::map / HeavyObject->int");
 	mapPerformanceTest<std::map<int, HeavyObject>>(largeSize, "std::map / int->HeavyObject");
-	
+
 	mapIntegratedSpeedTest<std::map<int, int>>(smallSize, "std::map");
 
 	mapIteratorTest<int, int>();
 
-	//mapMemoryTest<lib_calvin::map<int, int>>("lib_calvin::map");
+	//mapMemoryTest<map<int, int>>("map");
 
 	HeavyObject::countThisObject();
 }
@@ -51,7 +55,7 @@ void lib_calvin_container::mapTest()
 template <typename Impl>
 void lib_calvin_container::mapFunctionTest(size_t testSize, std::string title)
 {
-	typedef typename Impl::key_type K; 
+	typedef typename Impl::key_type K;
 	typedef typename Impl::mapped_type V;
 	cout << "Starting map function test for " << title << "\n";
 	vector<K> keyVector(testSize);
@@ -59,7 +63,7 @@ void lib_calvin_container::mapFunctionTest(size_t testSize, std::string title)
 	Impl impl;
 	std::map<K, V> stdMap;
 	bool correct = true;
-	cout << "inserting!\n"; 
+	cout << "inserting!\n";
 	for (unsigned i = 0; i < testSize; ++i) {
 		K key = rand();
 		V value = rand();
@@ -73,7 +77,7 @@ void lib_calvin_container::mapFunctionTest(size_t testSize, std::string title)
 			exit(0);
 		}
 	}
-	cout << "deleting!\n"; 
+	cout << "deleting!\n";
 	for (unsigned i = 0; i < testSize/10; ++i) {
 		K key = keyVector[rand() % testSize];
 		size_t a = impl.erase(key);
@@ -87,8 +91,8 @@ void lib_calvin_container::mapFunctionTest(size_t testSize, std::string title)
 			cout << "erase error:" << impl.size() << " " << stdMap.size() <<"\n";
 			exit(0);
 		}
-	}	
-	cout << "counting!\n"; 
+	}
+	cout << "counting!\n";
 	for (unsigned i = 0; i < testSize; ++i) {
 		K key = keyVector[i];
 		if (impl.count(key) != stdMap.count(key)) {
@@ -106,26 +110,26 @@ void lib_calvin_container::mapFunctionTest(size_t testSize, std::string title)
 template <typename Impl>
 void lib_calvin_container::mapRvalueTest(std::string title) {
 	cout << "Starting map Rvalue test for " << title << "\n";
-	typedef typename Impl::key_type K; 
+	typedef typename Impl::key_type K;
 	typedef typename Impl::mapped_type V;
 	Impl impl;
 	// explicit, move ctor (make_pair), move ctor (std::pair), move ctor (insert)
-	impl.insert(std::make_pair(K(1), V(1))); 
+	impl.insert(std::make_pair(K(1), V(1)));
 	// explicit, move ctor (std::pair)
-	std::pair<K, V> b(K(2), V(2)); 
+	std::pair<K, V> b(K(2), V(2));
 	impl.insert(b); // copy ctor
 	// explicit, default (operator[]), move ctor (std::pair), move ctor (insert), assignment ctor
-	impl[K(3)] = V(4); 
+	impl[K(3)] = V(4);
 	std::cout << "\n";
 }
 // performance test routine for given data array
 template <typename Impl, typename Key, typename Value>
-void lib_calvin_container::mapPerformanceTest_(lib_calvin::vector<std::pair<Key, Value>> const &data, 
+void lib_calvin_container::mapPerformanceTest_(lib_calvin::vector<std::pair<Key, Value>> const &data,
 											   unsigned n, std::string title) {
 	lib_calvin::stopwatch watch;
 	Impl impl;
 
-	// Calculate worst case insert time	
+	// Calculate worst case insert time
 	double insertTime = 0;
 	for (int i = 0; i < (int)(n*0.5); ++i) {
 		watch.start();
@@ -134,7 +138,7 @@ void lib_calvin_container::mapPerformanceTest_(lib_calvin::vector<std::pair<Key,
 		if (watch.read() > insertTime) {
 			insertTime = watch.read();
 		}
-	}	
+	}
 	cout << "Building MAX: " << insertTime << " sec\n";
 
 	watch.start();
@@ -143,7 +147,7 @@ void lib_calvin_container::mapPerformanceTest_(lib_calvin::vector<std::pair<Key,
 	}
 	watch.stop();
 	cout << "Inserting: " << n*0.2 / watch.read() << " ops per sec\n";
-	
+
 	watch.start();
 	auto checkSum = typename Impl::mapped_type(0);
 	for (auto iter = impl.begin(); iter != impl.end(); ++iter) {
@@ -172,7 +176,7 @@ void lib_calvin_container::mapPerformanceTest_(lib_calvin::vector<std::pair<Key,
 	for (int i = (int)(n*0.6); i < (int)(n*0.8); ++i) {
 		impl.erase(data[i].first);
 	}
-	watch.stop();	
+	watch.stop();
 	cout << "Deleting: " << n * 0.2 / watch.read() << " ops per sec\n";
 	std::cout << "\n";
 }
@@ -186,7 +190,7 @@ void lib_calvin_container::mapPerformanceTest(unsigned n, std::string title)
 	lib_calvin::vector<std::pair<K, V>> testVector(n), testVector2(n);
 	for (unsigned i = 0; i < n; ++i) {
 		testVector[i] = std::pair<K, V>(K(i), V(rand()));
-	}	
+	}
 
 	// Test case 1: random
 	std::shuffle(testVector.begin(), testVector.end(), std::mt19937_64 (std::random_device()()));
@@ -195,7 +199,7 @@ void lib_calvin_container::mapPerformanceTest(unsigned n, std::string title)
 	// Test case 2: sorted sequence
 	for (unsigned i = 0; i < n; ++i) {
 		testVector2[i] = std::pair<K, V>(K(i), V(rand()));
-	}	
+	}
 	mapPerformanceTest_(testVector2, n, "<Sorted data test>");
 	*/
 }
@@ -225,7 +229,7 @@ void lib_calvin_container::mapIntegratedSpeedTest(int n, std::string title) {
 	lib_calvin::vector<Impl> hostVector;
 	watch.start();
 	hostVector.resize(n * 1000);
-	watch.stop();	
+	watch.stop();
 	cout << "creating: " << n * 1000 / watch.read() << " ops per sec\n";
 
 	std::vector<std::vector<Impl>> holder;
@@ -234,7 +238,7 @@ void lib_calvin_container::mapIntegratedSpeedTest(int n, std::string title) {
 	for (int i = 0; i < n; ++i) {
 		holder[i] = std::vector<Impl>(1000);
 	}
-	watch.stop();	
+	watch.stop();
 	cout << "copying as empty: " << n * 1000 / watch.read() << " ops per sec\n";
 
 	std::cout << "\n";
@@ -243,7 +247,6 @@ void lib_calvin_container::mapIntegratedSpeedTest(int n, std::string title) {
 template <typename K, typename V>
 void lib_calvin_container::mapIteratorTest()
 {
-	using lib_calvin::map;
 	cout << "Starting map iterator test...\n";
 	map<K, V> testMap;
 	testMap.insert(std::pair<K, V>(K(2), V(10)));
@@ -305,7 +308,7 @@ void lib_calvin_container::mapMemoryTest(std::string title)
 	typedef typename Impl::mapped_type V;
 	std::cout << "\nStarting memory test for: " << title << "\n";
 	for (int i = 10000000; i > 0; --i) {
-		Impl impl;	
+		Impl impl;
 		for (int i = 0; i < 300; ++i) {
 			impl.insert(std::pair<K, V>(K(i), V(i)));
 		}
@@ -313,6 +316,6 @@ void lib_calvin_container::mapMemoryTest(std::string title)
 		for (int i = 0; i < 500; ++i) {
 			impl.erase(K(i));
 		}
-		impl2 = impl;	
+		impl2 = impl;
 	}
 }

@@ -13,7 +13,7 @@
 namespace lib_calvin
 {
 	template <typename T, typename Comp = std::less<T>>
-	using set = lib_calvin_container::RbTree<T, T, Comp>;
+	using rbtree_set = lib_calvin_container::RbTree<T, T, Comp>;
 
 	//using set = public boost::container::set<T, Comp>;
 	//using set = public std::set<T, Comp>;

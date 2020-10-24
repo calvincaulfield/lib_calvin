@@ -21,11 +21,11 @@ namespace lib_calvin_string {
 namespace lib_calvin
 {
 	template <typename Alphabet,
-		template <typename V, typename E, typename K, typename ExtractKey> class Graph = 
+		template <typename V, typename E, typename K, typename ExtractKey> class Graph =
 		lib_calvin_graph::simple_graph>
 	class suffix_tree {
 	private:
-		// all negative value integer is only for internal use. 
+		// all negative value integer is only for internal use.
 		// users of this class should only use positive char or int value of Alphabet
 		Alphabet dollor_ = '9';
 	public:
@@ -37,6 +37,10 @@ namespace lib_calvin
 		abstract_string<Alphabet> find_longest_common_substring() const;
 	public:
 		friend class lib_calvin_string::SuffixTreeTest<Alphabet>;
+    template <typename T>
+    using set = lib_calvin::btree_set<T>;
+    template <typename K, typename V>
+    using map = lib_calvin::btree_map<K, V>;
 	private:
 		enum class NodeType {
 			Internal = 0, Leaf = 1, Root = 2
@@ -228,7 +232,7 @@ namespace lib_calvin
 			wasInternalCreatedInLastExtension = false;
 			extension_ = 0;
 			Point workingPoint = getNullPoint();
-			for (phase_ = 1; phase_ <= texts_[textId_].size(); phase_++) { // must add text[phase-1] to each suffix		
+			for (phase_ = 1; phase_ <= texts_[textId_].size(); phase_++) { // must add text[phase-1] to each suffix
 				wasInternalCreatedInLastExtension = false;
 				Alphabet const &character = texts_[textId_][phase_ - 1];
 				//std::cout << "phase: " << phase_ << " char: " << character << "\n";
@@ -685,8 +689,8 @@ namespace lib_calvin
 					}
 				} else {
 					NodeKey grandPa = getNode(parentNode).parent_;
-					//std::cout << "follow suffix5, parent was: " << parentNode << " grandpd was: " << grandPa << "\n";		
-					// parent is direct child of root. 
+					//std::cout << "follow suffix5, parent was: " << parentNode << " grandpd was: " << grandPa << "\n";
+					// parent is direct child of root.
 					return followPathDown(link.textId_, getRootKey(), link.startIndex_, link.endIndex_);
 				}
 			}

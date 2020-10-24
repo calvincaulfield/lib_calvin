@@ -12,8 +12,6 @@
 #include "rb_tree.h"
 #include "graph.h"
 
-
-
 namespace lib_calvin_graph {
 	// Generic directed graph.
 	// Does not permit self-loop or multiple edges (will be extended later)
@@ -22,8 +20,9 @@ namespace lib_calvin_graph {
 	// ..network flow.
 
 	using lib_calvin::vector;
-	using lib_calvin::set;
 	using lib_calvin::btree_map;
+  template <typename T>
+  using set = lib_calvin::rbtree_set<T>;
 
 	template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>>
 	class simple_graph {

@@ -33,13 +33,16 @@ namespace lib_calvin_graph { // auxiliary for graph class
 
 size_t const UNREACHABLE_VERTEX = SIZE_MAX;
 
-using lib_calvin::map;
 using lib_calvin::vector;
-using lib_calvin::set;
 using std::pair;
 using std::cout;
 using std::endl;
 using lib_calvin_container::Identity;
+
+template <typename T>
+using set = lib_calvin::rbtree_set<T>;
+template <typename K, typename V>
+using map = lib_calvin::rbtree_map<K, V>;
 
 template <typename W>
 struct Tail {
